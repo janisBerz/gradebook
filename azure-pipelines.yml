@@ -27,24 +27,24 @@ stages:
         projects: '**/*.csproj'
         arguments: '--configuration $(buildConfiguration) --no-restore'
 
-    - task: DotNetCoreCLI@2
-      displayName: 'DotNet Core Publish'
-      inputs:
-        command: publish
-        publishWebProjects: true
-        arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/webApp --no-build'
-        projects: '**/*.csproj'
-        zipAfterPublish: true
+    # - task: DotNetCoreCLI@2
+    #   displayName: 'DotNet Core Publish'
+    #   inputs:
+    #     command: publish
+    #     publishWebProjects: true
+    #     arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/webApp --no-build'
+    #     projects: '**/*.csproj'
+    #     zipAfterPublish: true
 
-    - task: PublishPipelineArtifact@1
-      inputs:
-        path: $(build.artifactstagingdirectory)/webApp
-        artifact: webApp
+    # - task: PublishPipelineArtifact@1
+    #   inputs:
+    #     path: $(build.artifactstagingdirectory)/webApp
+    #     artifact: webApp
 
-    - task: PublishPipelineArtifact@1
-      inputs:
-        path: $(System.DefaultWorkingDirectory)/templates
-        artifact: templates
+    # - task: PublishPipelineArtifact@1
+    #   inputs:
+    #     path: $(System.DefaultWorkingDirectory)/templates
+    #     artifact: templates
 
 # - stage: Deployment_Dev
 #   jobs:
