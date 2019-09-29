@@ -46,33 +46,33 @@ stages:
         path: $(System.DefaultWorkingDirectory)/templates
         artifact: templates
 
-- stage: Deployment_Dev
-  jobs:
-  - deployment: deployment_dev
-    displayName: 'Dev'
-    pool:
-      vmImage: 'win1803'
-    condition: or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), eq(variables['Build.Reason'], 'PullRequest'))
-    environment: 'dev'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - template: deployment.yml
+# - stage: Deployment_Dev
+#   jobs:
+#   - deployment: deployment_dev
+#     displayName: 'Dev'
+#     pool:
+#       vmImage: 'win1803'
+#     condition: or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), eq(variables['Build.Reason'], 'PullRequest'))
+#     environment: 'dev'
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - template: deployment.yml
 
-- stage: Deployment_Kri
-  jobs:
-  - deployment: deployment_Kri
-    displayName: 'Kri'
-    pool:
-      vmImage: 'win1803'
-    condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/kri')
-    environment: 'kri'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - template: deployment.yml
+# - stage: Deployment_Kri
+#   jobs:
+#   - deployment: deployment_Kri
+#     displayName: 'Kri'
+#     pool:
+#       vmImage: 'win1803'
+#     condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/kri')
+#     environment: 'kri'
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - template: deployment.yml
 
 # - stage: Deployment_Test
 #   jobs:
