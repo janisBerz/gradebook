@@ -11,7 +11,7 @@ steps:
       csmParametersFile: $(Pipeline.Workspace)/templates/sendEmailLogicApp/sendEmailLogicApp.parameters.json
       overrideParameters: '-workflowsName $(resourcename)'
 
-  - task: keesschollaart.arm-outputs.arm-outputs.ARM Outputs@5
+  - task: keesschollaart.arm-outputs.arm-outputs.ARM.Outputs@5
     displayName: 'ARM Outputs'
     inputs:
       ConnectedServiceNameARM: $(azureSubscriptionName)
