@@ -1,19 +1,89 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+variables:
+  buildConfiguration: 'Release'
+  webAppDirectory: 'task-1-webapp/task-1-webapp'
+  webAppName: ist-visma-labs-app-$(Environment.Name)
+  azureSubscriptionName: 'FreeTrial2'
+  resourceGroupName: $(WebAppName)
+  resourcename: $(resourceGroupName)
+  poolImageName: 'win1803'
 
-trigger:
-- master
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    pool:
+      vmImage: '$(poolImageName)'
+    steps:
+    - task: DotNetCoreCLI@2
+      displayName: 'DotNet Core Restore'
+      inputs:
+        command: restore
+        projects: '**/*.csproj'
 
-pool:
-  vmImage: 'ubuntu-latest'
+    - task: DotNetCoreCLI@2
+      displayName: 'DotNet Core Build'
+      inputs:
+        command: build
+        projects: '**/*.csproj'
+        arguments: '--configuration $(buildConfiguration) --no-restore'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+    - task: DotNetCoreCLI@2
+      displayName: 'DotNet Core Publish'
+      inputs:
+        command: publish
+        publishWebProjects: true
+        arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/webApp --no-build'
+        projects: '**/*.csproj'
+        zipAfterPublish: true
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: $(build.artifactstagingdirectory)/webApp
+        artifact: webApp
+
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: $(System.DefaultWorkingDirectory)/templates
+        artifact: templates
+
+- stage: Deployment_Dev
+  jobs:
+  - deployment: deployment_dev
+    displayName: 'Dev'
+    pool:
+      vmImage: 'win1803'
+    condition: or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), eq(variables['Build.Reason'], 'PullRequest'))
+    environment: 'dev'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: deployment.yml
+
+- stage: Deployment_Kri
+  jobs:
+  - deployment: deployment_Kri
+    displayName: 'Kri'
+    pool:
+      vmImage: 'win1803'
+    condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/kri')
+    environment: 'kri'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: deployment.yml
+
+- stage: Deployment_Test
+  jobs:
+  - deployment: deployment_test
+    displayName: 'Test'
+    pool:
+      vmImage: 'win1803'
+    condition: and(succeeded('deployment_dev'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    environment: 'test'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: deployment.yml
