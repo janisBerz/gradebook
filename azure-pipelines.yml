@@ -34,6 +34,14 @@ stages:
         projects: '**/*.csproj'
         arguments: '--no-restore'
 
+    - task: VSTest@2
+      inputs:
+        testSelector: 'testAssemblies' # Options: testAssemblies, testPlan, testRun
+        testAssemblyVer2: | # Required when testSelector == TestAssemblies
+          **\*test*.dll
+        #  !**\*TestAdapter.dll
+        #  !**\obj\** 
+
     # - task: DotNetCoreCLI@2
     #   displayName: 'DotNet Core Publish'
     #   inputs:
