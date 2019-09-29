@@ -74,16 +74,16 @@ stages:
           steps:
           - template: deployment.yml
 
-- stage: Deployment_Test
-  jobs:
-  - deployment: deployment_test
-    displayName: 'Test'
-    pool:
-      vmImage: 'win1803'
-    condition: and(succeeded('deployment_dev'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-    environment: 'test'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - template: deployment.yml
+# - stage: Deployment_Test
+#   jobs:
+#   - deployment: deployment_test
+#     displayName: 'Test'
+#     pool:
+#       vmImage: 'win1803'
+#     condition: and(succeeded('deployment_dev'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+#     environment: 'test'
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - template: deployment.yml
