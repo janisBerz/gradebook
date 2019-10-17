@@ -3,6 +3,7 @@ variables:
   solutionType: DotNetCore # angularDotNetCore, dotNetCore, angular
   apiDirectory: ''
   coverletCoverageExclusions: ''
+  pool: 'windows-2019'
 
 # GitHub Repo that conatins build templates. Reference https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=vsts#using-other-repositories
 resources:
@@ -24,3 +25,4 @@ jobs:
   parameters:
     coverletCoverageExclusions: $(coverletCoverageExclusions)
     apiDirectory: $(apiDirectory)
+    pool: $(pool)
