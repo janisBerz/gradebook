@@ -12,7 +12,7 @@ resources:
     name: janisBerz/azure-devops-templates
     endpoint: 'janisBerz'
     ref: refs/heads/new-job
-    
+
 
 trigger:
 - master
