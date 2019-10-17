@@ -1,96 +1,26 @@
+# Set variables once
 variables:
-  buildConfiguration: 'Release'
-  webAppDirectory: 'task-1-webapp/task-1-webapp'
-  webAppName: ist-visma-labs-app-$(Environment.Name)
-  azureSubscriptionName: 'FreeTrial2'
-  resourceGroupName: $(WebAppName)
-  resourcename: $(resourceGroupName)
-  poolImageName: 'win1803'
+  solutionType: DotNetCore # angularDotNetCore, dotNetCore, angular
+  apiDirectory: ''
+  coverletCoverageExclusions: ''
 
-stages:
-- stage: Build
-  jobs:
-  - job: Build
-    pool:
-      vmImage: '$(poolImageName)'
-    steps:
-    - task: DotNetCoreCLI@2
-      displayName: 'DotNet Core Restore'
-      inputs:
-        command: restore
-        projects: '**/*.csproj'
+# GitHub Repo that conatins build templates. Reference https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=vsts#using-other-repositories
+resources:
+  repositories:
+  - repository: azureDevOpsTemplates
+    type: github
+    name: janisBerz/azure-devops-templates
+    endpoint: 'janisBerz'
+    ref: refs/branch/new-job
+    
 
-    - task: DotNetCoreCLI@2
-      displayName: 'DotNet Core Build'
-      inputs:
-        command: build
-        projects: '**/*.csproj'
-        arguments: '--configuration $(buildConfiguration) --no-restore'
+trigger:
+- master
+pr:
+- master
 
-    - task: DotNetCoreCLI@2
-      displayName: 'DotNet Core Run'
-      inputs:
-        command: run
-        projects: '**/*.csproj'
-        arguments: '--no-restore'
-
-    # - task: DotNetCoreCLI@2
-    #   displayName: 'DotNet Core Publish'
-    #   inputs:
-    #     command: publish
-    #     publishWebProjects: true
-    #     arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/webApp --no-build'
-    #     projects: '**/*.csproj'
-    #     zipAfterPublish: true
-
-    # - task: PublishPipelineArtifact@1
-    #   inputs:
-    #     path: $(build.artifactstagingdirectory)/webApp
-    #     artifact: webApp
-
-    # - task: PublishPipelineArtifact@1
-    #   inputs:
-    #     path: $(System.DefaultWorkingDirectory)/templates
-    #     artifact: templates
-
-# - stage: Deployment_Dev
-#   jobs:
-#   - deployment: deployment_dev
-#     displayName: 'Dev'
-#     pool:
-#       vmImage: 'win1803'
-#     condition: or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature'), eq(variables['Build.Reason'], 'PullRequest'))
-#     environment: 'dev'
-#     strategy:
-#       runOnce:
-#         deploy:
-#           steps:
-#           - template: deployment.yml
-
-# - stage: Deployment_Kri
-#   jobs:
-#   - deployment: deployment_Kri
-#     displayName: 'Kri'
-#     pool:
-#       vmImage: 'win1803'
-#     condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/kri')
-#     environment: 'kri'
-#     strategy:
-#       runOnce:
-#         deploy:
-#           steps:
-#           - template: deployment.yml
-
-# - stage: Deployment_Test
-#   jobs:
-#   - deployment: deployment_test
-#     displayName: 'Test'
-#     pool:
-#       vmImage: 'win1803'
-#     condition: and(succeeded('deployment_dev'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-#     environment: 'test'
-#     strategy:
-#       runOnce:
-#         deploy:
-#           steps:
-#           - template: deployment.yml
+jobs:
+- template: jobs/dotNetCore.yml.yml@azureDevOpsTemplates # Template reference
+  parameters:
+    coverletCoverageExclusions: $(coverletCoverageExclusions)
+    apiDirectory: $(apiDirectory)
