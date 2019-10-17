@@ -11,7 +11,7 @@ resources:
     type: github
     name: janisBerz/azure-devops-templates
     endpoint: 'janisBerz'
-    ref: refs/branch/new-job
+    ref: refs/new-job
     
 
 trigger:
