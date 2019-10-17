@@ -20,7 +20,7 @@ pr:
 - master
 
 jobs:
-- template: jobs/dotNetCore.yml.yml@azureDevOpsTemplates # Template reference
+- template: jobs/dotNetCore.yml@azureDevOpsTemplates # Template reference
   parameters:
     coverletCoverageExclusions: $(coverletCoverageExclusions)
     apiDirectory: $(apiDirectory)
